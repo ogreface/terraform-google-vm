@@ -94,10 +94,6 @@ resource "google_compute_instance_template" "tpl" {
     subnetwork_project = var.subnetwork_project
   }
 
-  lifecycle {
-    create_before_destroy = "true"
-  }
-
   // scheduling must have automatic_restart be false when preemptible is true.
   scheduling {
     preemptible       = var.preemptible

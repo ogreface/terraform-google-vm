@@ -52,7 +52,7 @@ resource "google_compute_region_instance_group_manager" "mig" {
   target_pools = var.target_pools
   target_size  = var.autoscaling_enabled ? var.min_replicas : var.target_size
 
-  auto_healing_policies {
+  dynamic auto_healing_policies {
     health_check      = length(local.healthchecks) > 0 ? local.healthchecks[0] : ""
     initial_delay_sec = length(local.healthchecks) > 0 ? var.hc_initial_delay_sec : 0
   }
@@ -69,10 +69,7 @@ resource "google_compute_region_instance_group_manager" "mig" {
       type                    = update_policy.value.type
     }
   }
-
-  lifecycle {
-    create_before_destroy = "true"
-  }
+  
 }
 
 resource "google_compute_region_autoscaler" "autoscaler" {
