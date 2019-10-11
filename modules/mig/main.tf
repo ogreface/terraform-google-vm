@@ -53,9 +53,15 @@ resource "google_compute_region_instance_group_manager" "mig" {
   target_size  = var.autoscaling_enabled ? var.min_replicas : var.target_size
 
   dynamic auto_healing_policies {
-    health_check      = length(local.healthchecks) > 0 ? local.healthchecks[0] : ""
+    for_each = local.healthchecks
     initial_delay_sec = length(local.healthchecks) > 0 ? var.hc_initial_delay_sec : 0
+    iterator = healthcheck
+    content {
+      health_check      = healthcheck.value
+      initial_delay_sec = var.hc_initial_delay_sec
+    }
   }
+  
   distribution_policy_zones = local.distribution_policy_zones
   dynamic "update_policy" {
     for_each = var.update_policy
@@ -69,7 +75,7 @@ resource "google_compute_region_instance_group_manager" "mig" {
       type                    = update_policy.value.type
     }
   }
-  
+
 }
 
 resource "google_compute_region_autoscaler" "autoscaler" {
