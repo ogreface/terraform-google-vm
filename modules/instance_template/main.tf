@@ -99,8 +99,5 @@ resource "google_compute_instance_template" "tpl" {
     preemptible       = var.preemptible
     automatic_restart = ! var.preemptible
   }
-
-  metadata = {
-    enable-oslogin = "true"
-  }
+  
 }
